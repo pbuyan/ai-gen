@@ -9,14 +9,21 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { runAi } from "@/actions/ai";
 // import "@toast-ui/editor/dist/toastui-editor.css";
-import { Editor } from "@tinymce/tinymce-react";
+// import { Editor } from "@tinymce/tinymce-react";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+import dynamic from "next/dynamic";
+
 import toast from "react-hot-toast";
 import { saveQuery } from "@/actions/ai";
 import { useUser } from "@clerk/nextjs";
 import { Template } from "@/utils/types";
 import { useUsage } from "@/context/usage";
 
+const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
+
 export default function Page({ params }: { params: { slug: string } }) {
+  const [value, setValue] = useState("**Hello world!!!**");
   // state
   const [query, setQuery] = useState("");
   const [content, setContent] = useState("");
@@ -30,9 +37,12 @@ export default function Page({ params }: { params: { slug: string } }) {
   const email = user?.primaryEmailAddress?.emailAddress || "";
 
   useEffect(() => {
+    // console.log(content);
+    // console.log(editorRef.current.getContent);
     if (content) {
-      const editorInstance = editorRef.current.getInstance();
-      editorInstance.setMarkdown(content);
+      // const editorInstance = editorRef.current?.getContent();
+      // editorInstance.setMarkdown(content);
+      setContent(content);
     }
   }, [content]);
 
@@ -56,7 +66,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   };
 
   const handleCopy = async () => {
-    const editorInstance = editorRef.current.getInstance();
+    const editorInstance = editorRef.current.getContent();
     const c = editorInstance.getMarkdown(); // .getHTML()
 
     try {
@@ -128,44 +138,23 @@ export default function Page({ params }: { params: { slug: string } }) {
         </div>
 
         <div className="col-span-2">
-          <Editor
-          id="zzz"
+          <MDEditor value={content} preview={"preview"} height={400} />
+          {/* <Editor
+            onInit={(_evt, editor) => (editorRef.current = editor)}
+            id="editor"
             ref={editorRef}
             apiKey="1ksguooih09ek9f51o2vx2tyqnp3y49n0zirnw9h9adp1jso"
-            onInit={(_evt, editor) => (editorRef.current = editor)}
-            initialValue="<p>Generated content will appear here.</p>"
             init={{
-              height: 500,
-              menubar: false,
-              plugins: [
-                "advlist",
-                "autolink",
-                "lists",
-                "link",
-                "image",
-                "charmap",
-                "preview",
-                "anchor",
-                "searchreplace",
-                "visualblocks",
-                "code",
-                "fullscreen",
-                "insertdatetime",
-                "media",
-                "table",
-                "code",
-                "help",
-                "wordcount",
-              ],
+              plugins:
+                "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount",
               toolbar:
-                "undo redo | blocks | " +
-                "bold italic forecolor | alignleft aligncenter " +
-                "alignright alignjustify | bullist numlist outdent indent | " +
-                "removeformat | help",
-              content_style:
-                "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+                "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
             }}
-          />
+            initialValue="Generated content will appear here."
+            onChange={() =>
+              setContent(editorRef.current.getContent().getMarkdown())
+            }
+          /> */}
 
           {/* <Editor
             ref={editorRef}
