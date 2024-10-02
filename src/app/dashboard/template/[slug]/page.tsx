@@ -23,7 +23,6 @@ import { useUsage } from "@/context/usage";
 const MDEditor = dynamic(() => import("@uiw/react-md-editor"), { ssr: false });
 
 export default function Page({ params }: { params: { slug: string } }) {
-  const [value, setValue] = useState("**Hello world!!!**");
   // state
   const [query, setQuery] = useState("");
   const [content, setContent] = useState("");
